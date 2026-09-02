@@ -4,6 +4,7 @@ const UNITS: Record<string, number> = {
   m: 60_000,
   h: 3_600_000,
   d: 86_400_000,
+  w: 604_800_000,
 };
 
 const TOKEN = /(\d+(?:\.\d+)?)\s*(ms|s|m|h|d)/gi;
@@ -39,6 +40,7 @@ export function formatDuration(ms: number): string {
   const parts: string[] = [];
   let rest = ms;
   for (const [unit, size] of [
+    ["w", UNITS.w!],
     ["d", UNITS.d!],
     ["h", UNITS.h!],
     ["m", UNITS.m!],
