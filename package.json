@@ -1,0 +1,17 @@
+{
+  "name": "srectl-target",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A small TypeScript library used as the review and test-generation target for SREctl.",
+  "scripts": {
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^3.2.4",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}
