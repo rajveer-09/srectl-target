@@ -7,6 +7,8 @@ export interface BackoffOptions {
   factor?: number;
   /** Duration string; caps any single delay. */
   max?: string;
+  /** Fraction of each delay to randomise, 0..1. */
+  jitter?: number;
 }
 
 /**
@@ -21,9 +23,12 @@ export function backoffSchedule(opts: BackoffOptions): number[] {
   const base = parseDuration(opts.base);
   const max = opts.max ? parseDuration(opts.max) : Number.POSITIVE_INFINITY;
 
+  const jitter = opts.jitter ?? 0;
+
   const out: number[] = [];
   for (let i = 0; i < attempts; i += 1) {
-    out.push(Math.min(Math.round(base * factor ** i), max));
+    const capped = Math.min(Math.round(base * factor ** i), max);
+    out.push(Math.round(capped * (1 + Math.random() * jitter)));
   }
   return out;
 }
