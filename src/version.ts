@@ -33,15 +33,43 @@ export function compareVersions(a: string, b: string): number {
   const right = parseVersion(b);
 
   for (const key of ["major", "minor", "patch"] as const) {
-    const l = String(left[key]);
-    const r = String(right[key]);
-    if (l !== r) return l < r ? -1 : 1;
+    if (left[key] !== right[key]) return left[key] < right[key] ? -1 : 1;
   }
 
   if (left.prerelease === right.prerelease) return 0;
+  // A release outranks any prerelease of the same core version.
   if (!left.prerelease) return 1;
   if (!right.prerelease) return -1;
-  return left.prerelease < right.prerelease ? -1 : 1;
+  return comparePrerelease(left.prerelease, right.prerelease);
+}
+
+/**
+ * SemVer 2.0.0 prerelease precedence.
+ *
+ * Compared identifier by identifier: numeric ones numerically, everything else
+ * by ASCII order, and a numeric identifier always ranks below an alphanumeric
+ * one. When one side runs out of identifiers first it sorts lower, so
+ * `1.0.0-rc` precedes `1.0.0-rc.1`.
+ */
+function comparePrerelease(a: string, b: string): number {
+  const left = a.split(".");
+  const right = b.split(".");
+
+  for (let i = 0; i < Math.max(left.length, right.length); i += 1) {
+    const l = left[i];
+    const r = right[i];
+    if (l === undefined) return -1;
+    if (r === undefined) return 1;
+    if (l === r) continue;
+
+    const lNumeric = /^\d+$/.test(l);
+    const rNumeric = /^\d+$/.test(r);
+    if (lNumeric && rNumeric) return Number(l) < Number(r) ? -1 : 1;
+    if (lNumeric !== rNumeric) return lNumeric ? -1 : 1;
+    return l < r ? -1 : 1;
+  }
+
+  return 0;
 }
 
 /** The highest version in the list. Throws on an empty list. */
