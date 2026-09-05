@@ -5,6 +5,7 @@ export function roundCents(amount: number): number {
   return Math.round(amount * 100) / 100;
 }
 
+/** Rejects non-finite input rather than producing NaN cents. */
 export function toCents(amount: number): number {
   return Math.round(amount * 100);
 }
