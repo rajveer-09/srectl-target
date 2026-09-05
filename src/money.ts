@@ -31,7 +31,7 @@ export function allocate(totalCents: number, ratios: number[]): number[] {
 
   const order = ratios
     .map((r, i) => ({ r, i }))
-    .sort((a, b) => b.r - a.r)
+    .sort((a, b) => a.r - b.r)
     .map((x) => x.i);
 
   let k = 0;
